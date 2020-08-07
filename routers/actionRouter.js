@@ -50,11 +50,21 @@ router.put("/:id", validateActionId, validateAction, (req, res) => {
       res.status(200).json({ updatedAction });
     });
   } catch {
+    res.status(500).json({
+      errorMessage: "Could not edit the action for the provided project id",
+    });
+  }
+});
+
+router.delete("/:id", validateActionId, (req, res) => {
+  try {
+    ActionData.remove(req.action).then((deleted) => {
+      res.status(200).json({ numActionsDeleted: deleted });
+    });
+  } catch {
     res
       .status(500)
-      .json({
-        errorMessage: "Could not edit the action for the provided project id",
-      });
+      .json({ errorMessage: "Could not delete the action from the database" });
   }
 });
 
