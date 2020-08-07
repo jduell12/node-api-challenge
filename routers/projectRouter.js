@@ -26,6 +26,25 @@ router.get("/:id", validateProjectId, (req, res) => {
   }
 });
 
+//adds a new project to the database
+router.post("/", validateProject, (req, res) => {
+  try {
+    ProjectData.insert(req.body)
+      .then((project) => {
+        res.status(201).json({ created: project });
+      })
+      .catch((err) =>
+        res
+          .status(500)
+          .json({ errorMessage: "Could not add project to database." })
+      );
+  } catch {
+    res
+      .status(500)
+      .json({ errorMessage: "Could not add project to database." });
+  }
+});
+
 //custom middleware
 function validateProjectId(req, res, next) {
   const projectId = req.params.id;
@@ -42,6 +61,18 @@ function validateProjectId(req, res, next) {
     .catch((err) => {
       res.status(400).json({ message: "Invalid project id" });
     });
+}
+
+function validateProject(req, res, next) {
+  const projectInfo = req.body;
+
+  if (!projectInfo.name || !projectInfo.description) {
+    res.status(400).json({
+      message: "Please include a name and description for the project",
+    });
+  } else {
+    next();
+  }
 }
 
 module.exports = router;
