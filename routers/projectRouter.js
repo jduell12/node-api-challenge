@@ -66,6 +66,19 @@ router.put("/:id", validateProjectId, validateProject, (req, res) => {
   }
 });
 
+//deletes the project with the provided id from the database
+router.delete("/:id", validateProjectId, (req, res) => {
+  try {
+    ProjectData.remove(req.project).then((deleted) => {
+      res.status(200).json({ numPostsDeleted: deleted });
+    });
+  } catch {
+    res
+      .status(500)
+      .json({ errorMessage: "Unable to delete project from the database" });
+  }
+});
+
 //custom middleware
 function validateProjectId(req, res, next) {
   const projectId = req.params.id;
