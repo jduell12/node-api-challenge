@@ -17,12 +17,28 @@ router.get("/", (req, res) => {
 //returns one project object with the id passed to it if it exists
 router.get("/:id", validateProjectId, (req, res) => {
   try {
-    const { id } = req.params;
-    ProjectData.get(id).then((project) => {
+    ProjectData.get(req.project).then((project) => {
       res.status(200).json({ project });
     });
   } catch {
     res.status(500).json({ errorMessage: "Unable to get project" });
+  }
+});
+
+//returns a list of actions for the project id passed in
+router.get("/:id/actions", validateProjectId, (req, res) => {
+  try {
+    ProjectData.getProjectActions(req.project).then((actions) => {
+      if (actions[0] === undefined) {
+        res
+          .status(200)
+          .json({ message: "That project currently has no actions" });
+      } else {
+        res.status(200).json({ actions });
+      }
+    });
+  } catch {
+    res.status(500).json({ errorMessage: "Unable to get project actions" });
   }
 });
 
