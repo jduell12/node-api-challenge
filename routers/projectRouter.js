@@ -45,19 +45,24 @@ router.get("/:id/actions", validateProjectId, (req, res) => {
 //adds a new project to the database
 router.post("/", validateProject, (req, res) => {
   try {
-    ProjectData.insert(req.body)
-      .then((project) => {
-        res.status(201).json({ created: project });
-      })
-      .catch((err) =>
-        res
-          .status(500)
-          .json({ errorMessage: "Could not add project to database." })
-      );
+    ProjectData.insert(req.body).then((project) => {
+      res.status(201).json({ created: project });
+    });
   } catch {
     res
       .status(500)
       .json({ errorMessage: "Could not add project to database." });
+  }
+});
+
+//edits the provided project id with the provided new information
+router.put("/:id", validateProjectId, validateProject, (req, res) => {
+  try {
+    ProjectData.update(req.project, req.body).then((newProject) => {
+      res.status(200).json({ newProject });
+    });
+  } catch {
+    res.status(500).json({ errorMessage: "Could not edit the project" });
   }
 });
 
